@@ -162,11 +162,21 @@ def visualize_model(model, num_images=6):
                     return
         model.train(mode=was_training)
 
+# Get model nu,ber of params
+def get_n_params(model):
+    pp=0
+    for p in list(model.parameters()):
+        nn=1
+        for s in list(p.size()):
+            nn = nn*s
+        pp += nn
+    return pp
 
 model_ft = models.resnet18(pretrained=True)
-print(model_ft)
 num_ftrs = model_ft.fc.in_features
 model_ft.fc = nn.Linear(num_ftrs, 2)
+print(model_ft)
+print(get_n_params(model_ft))
 
 model_ft = model_ft.to(device)
 
