@@ -71,7 +71,7 @@ out = torchvision.utils.make_grid(inputs)
 #imshow(out, title=[class_names[x] for x in classes])
 
 
-def train_model(model, criterion, optimizer,  num_epochs=25):
+def train_model(model, criterion, optimizer, num_epochs=25):
     since = time.time()
 
     best_model_wts = copy.deepcopy(model.state_dict())
@@ -185,7 +185,9 @@ class ConvNet(nn.Module):
             nn.Conv2d(3, 16, kernel_size=7, stride=2, padding=2),
             nn.BatchNorm2d(16),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Dropout(p=0.7))
+
         self.layer2 = nn.Sequential(
             nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=2),
             nn.Dropout(0.5),
@@ -201,7 +203,8 @@ class ConvNet(nn.Module):
             nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=2),
             nn.BatchNorm2d(32),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Dropout(p=0.7))
         self.layer5 = nn.Sequential(
             nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=2),
             nn.BatchNorm2d(32),
