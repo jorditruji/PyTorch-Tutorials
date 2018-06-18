@@ -22,7 +22,7 @@ plt.ion()   # interactive mode
 data_transforms = {
     'train': transforms.Compose([
         transforms.ColorJitter(),
-        transforms.RandomResizedCrop(224),
+        #transforms.RandomResizedCrop(224),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
@@ -238,10 +238,10 @@ model_ft = model.to(device)
 criterion = nn.CrossEntropyLoss()
 
 # Observe that all parameters are being optimized
-optimizer_ft = optim.Adam(model_ft.parameters(), lr=0.001)
+optimizer_ft = optim.Adam(model_ft.parameters(), lr=0.01)
 
 # Decay LR by a factor of 0.5 every 7 epochs
-exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=5, gamma=0.1)
+exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=10, gamma=0.1)
 
 model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
                        num_epochs=150)
