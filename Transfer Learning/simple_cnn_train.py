@@ -85,7 +85,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
         # Each epoch has a training and validation phase
         for phase in ['train', 'val']:
             if phase == 'train':
-                scheduler.step()
+                #scheduler.step()
                 model.train()  # Set model to training mode
             else:
                 model.eval()   # Set model to evaluate mode
@@ -239,10 +239,9 @@ model_ft = model.to(device)
 criterion = nn.CrossEntropyLoss()
 
 # Observe that all parameters are being optimized
-optimizer_ft = optim.Adam(model_ft.parameters(), lr=0.01)
+optimizer_ft = optim.Adam(model_ft.parameters(), lr=0.001)
 
-# Decay LR by a factor of 0.5 every 7 epochs
+# Decay LR by a factor of 0.5 every 7 epochs --> fuck it, adam will make it for us
 exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=10, gamma=0.1)
 
-model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
-                       num_epochs=150)
+model_ft = train_model(model_ft, criterion, optimizer_ft, num_epochs=150)
