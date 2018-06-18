@@ -71,7 +71,7 @@ out = torchvision.utils.make_grid(inputs)
 #imshow(out, title=[class_names[x] for x in classes])
 
 
-def train_model(model, criterion, optimizer, num_epochs=25):
+def train_model(model, criterion, optimizer,scheduler, num_epochs=25):
     since = time.time()
 
     best_model_wts = copy.deepcopy(model.state_dict())
@@ -85,7 +85,7 @@ def train_model(model, criterion, optimizer, num_epochs=25):
         # Each epoch has a training and validation phase
         for phase in ['train', 'val']:
             if phase == 'train':
-                #scheduler.step()
+                scheduler.step()
                 model.train()  # Set model to training mode
             else:
                 model.eval()   # Set model to evaluate mode
@@ -185,8 +185,7 @@ class ConvNet(nn.Module):
             nn.Conv2d(3, 16, kernel_size=7, stride=2, padding=2),
             nn.BatchNorm2d(16),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.Dropout(p=0.7))
+            nn.MaxPool2d(kernel_size=2, stride=2))
 
         self.layer2 = nn.Sequential(
             nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=2),
@@ -203,8 +202,7 @@ class ConvNet(nn.Module):
             nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=2),
             nn.BatchNorm2d(32),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.Dropout(p=0.7))
+            nn.MaxPool2d(kernel_size=2, stride=2))
         self.layer5 = nn.Sequential(
             nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=2),
             nn.BatchNorm2d(32),
@@ -245,6 +243,6 @@ criterion = nn.CrossEntropyLoss()
 optimizer_ft = optim.Adam(model_ft.parameters(), lr=0.001)
 
 # Decay LR by a factor of 0.5 every 7 epochs --> fuck it, adam will make it for us
-exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=10, gamma=0.1)
+exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=15, gamma=0.1)
 
-model_ft = train_model(model_ft, criterion, optimizer_ft, num_epochs=150)
+model_ft = train_model(model_ft, criterion, optimizer_ft,exp_lr_scheduler, num_epochs=150)
