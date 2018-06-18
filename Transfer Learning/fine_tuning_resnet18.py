@@ -162,7 +162,7 @@ def visualize_model(model, num_images=6):
                     return
         model.train(mode=was_training)
 
-# Get model nu,ber of params
+# Get model number of params
 def get_n_params(model):
     pp=0
     for p in list(model.parameters()):

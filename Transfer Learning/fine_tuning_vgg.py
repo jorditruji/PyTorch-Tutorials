@@ -175,65 +175,14 @@ def get_n_params(model):
         pp += nn
     return pp
 
-# Convolutional neural network (two convolutional layers)
-class ConvNet(nn.Module):
-    def __init__(self, num_classes=10):
-        super(ConvNet, self).__init__()
-        self.layer1 = nn.Sequential(
-            nn.Conv2d(3, 16, kernel_size=7, stride=2, padding=2),
-            nn.BatchNorm2d(16),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
-        self.layer2 = nn.Sequential(
-            nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=2),
-            nn.Dropout(0.5),
-            nn.BatchNorm2d(32),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
-        self.layer3 = nn.Sequential(
-            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=2),
-            nn.BatchNorm2d(32),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
-        self.layer4 = nn.Sequential(
-            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=2),
-            nn.BatchNorm2d(32),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
-        self.layer5 = nn.Sequential(
-            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=2),
-            nn.BatchNorm2d(32),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
-        self.layer6 = nn.Sequential(
-            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=2),
-            nn.BatchNorm2d(32),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
-        self.fc = nn.Sequential(
-            #nn.AvgPool2d(kernel_size=7, stride=1, padding=0),
-            nn.Linear(288,1024),
-            nn.ReLU(),
-            nn.Dropout(),
-            nn.Linear(1024,2),
-            torch.nn.Softmax())
-        
-    def forward(self, x):
-        out = self.layer1(x)
-        out = self.layer2(out)
-        out = self.layer3(out)
-        out = self.layer4(out)
-        out = self.layer5(out)
-        out = self.layer6(out)
-        out = out.reshape(out.size(0), -1)
-        out = self.fc(out)
-        return out
+vgg16 = models.vgg16()
 
-model = ConvNet(num_classes=2).to(device)
-print (model)
-print(get_n_params(model))
-model_ft = model.to(device)
+print (vgg16)
+print(get_n_params(vgg16))
+vgg16.classifier[6] = nn.Linear(4096, 2)
 
+model_ft = vgg16.to(device)
+print(model_ft)
 criterion = nn.CrossEntropyLoss()
 
 # Observe that all parameters are being optimized
@@ -244,3 +193,7 @@ exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=5, gamma=0.1)
 
 model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
                        num_epochs=150)
+
+
+
+
