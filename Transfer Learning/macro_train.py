@@ -198,18 +198,18 @@ class ConvNet(nn.Module):
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2))
         self.layer5 = nn.Sequential(
-            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=2),
-            nn.BatchNorm2d(32),
+            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=2),
+            nn.BatchNorm2d(64),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2))
         self.layer6 = nn.Sequential(
-            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=2),
-            nn.BatchNorm2d(32),
+            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=2),
+            nn.BatchNorm2d(64),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2))
         self.fc = nn.Sequential(
             #nn.AvgPool2d(kernel_size=7, stride=1, padding=0),
-            nn.Linear(288,1024),
+            nn.Linear(576,1024),
             nn.ReLU(),
             nn.Dropout(),
             nn.Linear(1024,num_classes),
@@ -239,33 +239,18 @@ optimizer_ft = optim.Adam(model_ft.parameters(), lr=0.001)
 # Decay LR by a factor of 0.5 every ? epochs -
 exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=15, gamma=0.1)
 
-print('model1: adam, lr=0.001 -0.1x15epochs')
-model_ft = train_model(model_ft, criterion, optimizer_ft,exp_lr_scheduler, num_epochs=150)
-
-
-print('model1: adagrad, lr=0.01 -0.1x15epochs')
-optimizer_ft = optim.Adagrad(model_ft.parameters(), lr=0.01, lr_decay=0)
-model_ft = train_model(model_ft, criterion, optimizer_ft,exp_lr_scheduler, num_epochs=150)
 
 print('model1: adagrad, lr=0.001 -0.1x15epochs')
 optimizer_ft = optim.Adagrad(model_ft.parameters(), lr=0.001, lr_decay=0)
 model_ft = train_model(model_ft, criterion, optimizer_ft,exp_lr_scheduler, num_epochs=150)
 
-print('model1: Adamax, lr=0.002 -0.1x15epochs')
-optimizer_ft = optim.Adamax(model_ft.parameters(), lr=0.002, betas=(0.9, 0.999))
+
+'''
+print('model1: adagrad, lr=0.001 -0.1x15epochs')
+optimizer_ft = optim.Adagrad(model_ft.parameters(), lr=0.001, lr_decay=0)
 model_ft = train_model(model_ft, criterion, optimizer_ft,exp_lr_scheduler, num_epochs=150)
 
-
-print('model1: Adamax, lr=0.001 -0.1x15epochs')
-optimizer_ft = optim.Adamax(model_ft.parameters(), lr=0.001, betas=(0.9, 0.999))
-model_ft = train_model(model_ft, criterion, optimizer_ft,exp_lr_scheduler, num_epochs=150)
-
-
-print('model1: SGD, lr=0.001 -0.1x15epochs')
-optimizer_ft = optim.SGD(model_ft.parameters(), lr=0.001, momentum=0.9)
-model_ft = train_model(model_ft, criterion, optimizer_ft,exp_lr_scheduler, num_epochs=150)
-
-
-print('model1: SGD, lr=0.002 -0.1x15epochs')
-optimizer_ft = optim.SGD(model_ft.parameters(), lr=0.002, momentum=0.9)
-model_ft = train_model(model_ft, criterion, optimizer_ft,exp_lr_scheduler, num_epochs=150)
+model1: adagrad, lr=0.001 -0.1x15epochs
+Training complete in 30m 39s
+Best val Acc: 0.764706
+'''
