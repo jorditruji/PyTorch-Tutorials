@@ -75,7 +75,8 @@ def train_model(model, criterion, optimizer,scheduler, num_epochs=25):
     best_acc = 0.0
 
     for epoch in range(num_epochs):
-
+        print('Epoch {}/{}'.format(epoch, num_epochs - 1))
+        print('-' * 10)
         # Each epoch has a training and validation phase
         for phase in ['train', 'val']:
             if phase == 'train':
@@ -114,8 +115,8 @@ def train_model(model, criterion, optimizer,scheduler, num_epochs=25):
             epoch_loss = running_loss / dataset_sizes[phase]
             epoch_acc = running_corrects.double() / dataset_sizes[phase]
 
-            #print('{} Loss: {:.4f} Acc: {:.4f}'.format(
-            #    phase, epoch_loss, epoch_acc))
+            print('{} Loss: {:.4f} Acc: {:.4f}'.format(
+                phase, epoch_loss, epoch_acc))
 
             # deep copy the model
             if phase == 'val' and epoch_acc > best_acc:
@@ -198,18 +199,18 @@ class ConvNet(nn.Module):
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2))
         self.layer5 = nn.Sequential(
-            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=2),
-            nn.BatchNorm2d(64),
+            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=2),
+            nn.BatchNorm2d(32),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2))
         self.layer6 = nn.Sequential(
-            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=2),
-            nn.BatchNorm2d(64),
+            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=2),
+            nn.BatchNorm2d(32),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2))
         self.fc = nn.Sequential(
             #nn.AvgPool2d(kernel_size=7, stride=1, padding=0),
-            nn.Linear(576,1024),
+            nn.Linear(288,1024),
             nn.ReLU(),
             nn.Dropout(),
             nn.Linear(1024,num_classes),
@@ -226,7 +227,51 @@ class ConvNet(nn.Module):
         out = self.fc(out)
         return out
 
-model = ConvNet(num_classes=2).to(device)
+
+# Convolutional neural network (two convolutional layers)
+class MiniConvNet(nn.Module):
+    def __init__(self, num_classes=2):
+        super(MiniConvNet, self).__init__()
+        self.layer1 = nn.Sequential(
+            nn.Conv2d(3, 16, kernel_size=7, stride=2, padding=2),
+            nn.BatchNorm2d(16),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2))
+
+        self.layer2 = nn.Sequential(
+            nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=2),
+            nn.Dropout(0.5),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2))
+        self.layer3 = nn.Sequential(
+            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=2),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2))
+        self.layer4 = nn.Sequential(
+            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=2),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.AvgPool2d(kernel_size=6, stride=4, padding=0))
+        self.fc = nn.Sequential(
+           
+            nn.Linear(288,1024),
+            nn.ReLU(),
+            nn.Dropout(),
+            nn.Linear(1024,num_classes),
+            torch.nn.Softmax())
+        
+    def forward(self, x):
+        out = self.layer1(x)
+        out = self.layer2(out)
+        out = self.layer3(out)
+        out = self.layer4(out)
+        out = out.reshape(out.size(0), -1)
+        out = self.fc(out)
+        return out
+
+model = MiniConvNet(num_classes=2).to(device)
 print (model)
 print(get_n_params(model))
 model_ft = model.to(device)
@@ -234,14 +279,10 @@ model_ft = model.to(device)
 criterion = nn.CrossEntropyLoss()
 
 # Observe that all parameters are being optimized
-optimizer_ft = optim.Adam(model_ft.parameters(), lr=0.001)
+optimizer_ft = optim.Adagrad(model_ft.parameters(), lr=0.001, lr_decay=0)
 
 # Decay LR by a factor of 0.5 every ? epochs -
 exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=15, gamma=0.1)
-
-
-print('model1: adagrad, lr=0.001 -0.1x15epochs')
-optimizer_ft = optim.Adagrad(model_ft.parameters(), lr=0.001, lr_decay=0)
 model_ft = train_model(model_ft, criterion, optimizer_ft,exp_lr_scheduler, num_epochs=150)
 
 
