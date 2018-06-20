@@ -175,7 +175,7 @@ def get_n_params(model):
         pp += nn
     return pp
 
-vgg16 = models.vgg16()
+vgg16 = models.vgg16(trained=True)
 
 print (vgg16)
 print(get_n_params(vgg16))
