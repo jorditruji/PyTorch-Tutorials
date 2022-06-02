@@ -14,7 +14,7 @@ entrypoints==0.2.3
 enum34==1.1.6
 gensim==3.4.0
 h5py==2.7.1
-html5lib==0.9999999
+html5lib==0.99999999
 idna==2.6
 imutils==0.4.5
 ipykernel==4.6.1
